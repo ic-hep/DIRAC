@@ -480,22 +480,25 @@ dirac-proxy-info
   def monitorProxy( self, glexecLocation, pilotProxy, payloadProxy ):
     """ Monitor the payload proxy and renew as necessary.
     """
+    self.log.notice("Monitoring proxy.")
     retVal = self._monitorProxy( pilotProxy, payloadProxy )
     if not retVal['OK']:
       # Failed to renew the proxy, nothing else to be done
+      self.log.error("Failed to renew the proxy.")
       return retVal
 
     if not retVal['Value']:
       # No need to renew the proxy, nothing else to be done
+      self.log.notice("Proxy doesn't need renewing")
       return retVal
 
     if glexecLocation:
-      self.log.info( 'Rerunning glexec without arguments to renew payload proxy' )
+      self.log.notice( 'Rerunning glexec without arguments to renew payload proxy' )
       result = self.glexecExecute( None, glexecLocation )
       if not result['OK']:
         self.log.error( 'Failed glexecExecute', result )
     else:
-      self.log.info( 'Running without glexec, checking local proxy' )
+      self.log.notice( 'Running without glexec, checking local proxy' )
 
     return S_OK( 'Proxy checked' )
 
