@@ -9,7 +9,7 @@ import re
 import stat
 import uuid
 import distutils.spawn
-from tempfile import mkdtemp
+from tempfile import mkdtemp, NamedTemporaryFile
 from shutil import rmtree
 
 import DIRAC
