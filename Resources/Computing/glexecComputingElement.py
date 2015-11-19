@@ -113,6 +113,12 @@ class glexecComputingElement( ComputingElement ):
         return result
       pilot_dir, job_dir = result['Value']
 
+    # Ensure that the proxy target location is known to the pilot and will be the same each time
+    # glexec pulls it through. Without this glexec adds 6 random chars to the end each time so we don't
+    # renew the same proxy.
+    with NamedTemporaryFile(prefix='x509up_glexec_') as tmp:
+        os.environ['GLEXEC_TARGET_PROXY'] = os.path.join(job_dir, os.path.basename(tmp.name))
+
     #Test glexec with payload proxy prior to submitting the job
     self.log.notice("Running in job_dir: %s"% job_dir)
     result = self.glexecTest( glexecLocation, job_dir )
@@ -425,7 +431,7 @@ dirac-proxy-info
     if glexecLocation and executableFile:
       cmd = "%s /bin/bash -lc '%s'" % ( glexecLocation, executableFile )
     if glexecLocation and not executableFile:
-      cmd = '%s' % ( glexecLocation )
+      cmd = '%s /bin/true' % ( glexecLocation )
 
     self.log.info( 'CE submission command is: %s' % cmd )
     result = shellCall( 0, cmd, callbackFunction = self.sendOutput )
