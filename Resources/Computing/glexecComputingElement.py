@@ -368,7 +368,7 @@ dirac-proxy-info
     if not glexecLocation:
       return S_RETRYERROR(self, "Can't setup pilot dir as can't find glexec")
     pilot_dir = mkdtemp(prefix='glexec_pilot', dir=pilot_dir)
-    job_dir = os.path.join(pilot_dir, 'job_dir')
+    job_dir = os.path.join(pilot_dir, 'job_dir_glexec')
     os.chdir(pilot_dir)
     os.chmod(pilot_dir, 0o1777)  # sticky bit stops the inner dir being overwritten by another user before we chmod again
     result = self.glexecMakeDir(glexecLocation, job_dir)
