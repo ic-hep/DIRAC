@@ -22,6 +22,9 @@ class glexecInProcessComputingElement(glexecComputingElement, InProcessComputing
             self.log.notice("faling back to InProcessComputingElement...")
             self.in_process = True
             os.chdir(original_dir)  # change out of the glexec dir into the original dir
+            self.log.notice("Current working dir: %s"%os.getcwd())
+            from pprint import pformat
+            self.log.notice("Current Environment: %s" % pformat(os.environ))
             result = InProcessComputingElement.submitJob(self, executableFile, proxy, dummy)
             if not result['OK']:
                 self.log.error("Failed to submit job using InProcessComputingElement as fallback: %s" % result['Message'])
