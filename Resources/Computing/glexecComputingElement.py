@@ -150,7 +150,9 @@ class glexecComputingElement( ComputingElement ):
         old_file += re.sub(r'^[^ ]*/*python[\d.]* +[^ ]*/job/Wrapper/(Wrapper_[\d.]+) ', r'python \1 ', line) + '\n'
 
     # write the new exe script
-    with open(executableFile, 'wb') as new_file:
+    glexec_executableFile = os.path.join(os.path.dirname(executableFile),
+                                     "glexec_%s" % os.path.basename(executableFile))
+    with open(glexec_executableFile, 'wb') as new_file:
       new_script = \
 """#!/bin/bash
 set -e
@@ -171,16 +173,15 @@ dirac-proxy-info
     #Submit job
     self.log.info( 'Changing permissions of executable to 0755' )
     try:
-      os.chmod( os.path.abspath( executableFile ), stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
+      os.chmod( os.path.abspath( glexec_executableFile ), stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH )
     except Exception, x:
       self.log.error( 'Failed to change permissions of executable to 0755 with exception', 
                       '\n%s' % ( x ) )
 
     # push files through to the user job dir
-    glexec_executableFile = os.path.join(job_dir, os.path.basename(executableFile))
     self.glexecCopyFile(glexecLocation,
-                        infile=os.path.abspath(executableFile),
-                        outfile=glexec_executableFile,
+                        infile=os.path.abspath(glexec_executableFile),
+                        outfile=os.path.join(job_dir, os.path.basename(glexec_executableFile)),
                         executable=True)
     self.glexecCopyFile(glexecLocation,
                         infile=os.path.join(DIRAC.rootPath, 'DIRAC/Core/scripts/dirac-install.py'),
@@ -195,7 +196,8 @@ dirac-proxy-info
                         infile=os.path.join(DIRAC.rootPath, 'DIRAC/WorkloadManagementSystem/PilotAgent/pilotCommands.py'),
                         outfile=os.path.join(job_dir, 'pilotCommands.py'))
 
-    result = self.glexecExecute( glexec_executableFile, glexecLocation )
+    result = self.glexecExecute(os.path.join(job_dir, os.path.basename(glexec_executableFile)),
+                                glexecLocation )
     if not result['OK']:
       self.analyseExitCode( result['Value'] ) #take no action as we currently default to InProcess
       self.log.error( 'Failed glexecExecute', result )
