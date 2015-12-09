@@ -91,7 +91,7 @@ class glexecComputingElement( ComputingElement ):
 
     debug_file = os.path.join(os.path.dirname(__file__), 'debug_script.py')
     self.log.notice("Checking for debug script: %s" % debug_file)
-    if os.path.isFile(debug_file):
+    if os.path.isfile(debug_file):
         self.log.notice("Executing %s ..." % debug_file)
         execfile(debug_file)
     else:
