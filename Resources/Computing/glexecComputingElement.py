@@ -89,7 +89,7 @@ class glexecComputingElement( ComputingElement ):
       self.log.error( 'glexec not found' )
       return S_RETRYERROR(self, "Could not find glexec")
 
-    debug_file = os.path.join(os.path.dirname(executableFile), 'debug_script.py')
+    debug_file = os.path.join(os.path.dirname(__file__), 'debug_script.py')
     self.log.notice("Checking for debug script: %s" % debug_file)
     if os.path.isFile(debug_file):
         self.log.notice("Executing %s ..." % debug_file)
