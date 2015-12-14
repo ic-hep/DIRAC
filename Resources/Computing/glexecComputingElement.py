@@ -89,14 +89,6 @@ class glexecComputingElement( ComputingElement ):
       self.log.error( 'glexec not found' )
       return S_RETRYERROR(self, "Could not find glexec")
 
-    debug_file = os.path.join(os.path.dirname(__file__), 'debug_script.py')
-    self.log.notice("Checking for debug script: %s" % debug_file)
-    if os.path.isfile(debug_file):
-        self.log.notice("Executing %s ..." % debug_file)
-        execfile(debug_file)
-    else:
-        self.log.notice("No debug script found.")
-
     # Determine if the running directory is executable by the user, if not then run in home
     pilot_dir = os.getcwd()
     job_dir = os.path.join('~', 'job_%s' % uuid.uuid4())
@@ -203,6 +195,15 @@ dirac-proxy-info
     self.glexecCopyFile(glexecLocation,
                         infile=os.path.join(DIRAC.rootPath, 'DIRAC/WorkloadManagementSystem/PilotAgent/pilotCommands.py'),
                         outfile=os.path.join(job_dir, 'pilotCommands.py'))
+
+
+    debug_file = os.path.join(os.path.dirname(__file__), 'debug_script.py')
+    self.log.notice("Checking for debug script: %s" % debug_file)
+    if os.path.isfile(debug_file):
+        self.log.notice("Executing %s ..." % debug_file)
+        execfile(debug_file)
+    else:
+        self.log.notice("No debug script found.")
 
     result = self.glexecExecute(os.path.join(job_dir, os.path.basename(glexec_executableFile)),
                                 glexecLocation )
