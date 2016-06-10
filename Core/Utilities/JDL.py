@@ -1,9 +1,13 @@
 # $HeadURL$
 __RCSID__ = "$Id$"
 
+import re
 from DIRAC import S_OK, S_ERROR
 from DIRAC.Core.Utilities.CFG import CFG
 from DIRAC.Core.Utilities import List
+
+comment_re = re.compile(r'''#.*$''', flags=re.MULTILINE)
+
 
 def loadJDLAsCFG( jdl ):
   """
@@ -67,6 +71,7 @@ def loadJDLAsCFG( jdl ):
     cfg.setOption( key, value )
     return S_OK()
 
+  jdl = comment_re.sub('', jdl)
   if jdl[ 0 ] == "[":
     iPos = 1
   else:
