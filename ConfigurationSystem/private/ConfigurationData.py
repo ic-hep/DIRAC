@@ -2,6 +2,7 @@
 __RCSID__ = "$Id$"
 
 import os.path
+import re
 import zlib
 import zipfile
 import threading, thread
@@ -13,6 +14,7 @@ from DIRAC.Core.Utilities.CFG import CFG
 from DIRAC.Core.Utilities.LockRing import LockRing
 from DIRAC.FrameworkSystem.Client.Logger import gLogger
 
+path_regex = re.compile(r'(?<!\\)/')
 class ConfigurationData:
 
   def __init__( self, loadDefaultCFG = True ):
@@ -108,7 +110,7 @@ class ConfigurationData:
       cfg = self.mergedCFG
     self.dangerZoneStart()
     try:
-      levelList = [ level.strip() for level in path.split( "/" ) if level.strip() != "" ]
+      levelList = [ level.replace('\/','/').strip() for level in path_regex.split( path ) if level.strip('\ /') != "" ]
       for section in levelList[:-1]:
         cfg = cfg[ section ]
       return self.dangerZoneEnd( cfg.getComment( levelList[-1] ) )
@@ -121,7 +123,7 @@ class ConfigurationData:
       cfg = self.mergedCFG
     self.dangerZoneStart()
     try:
-      levelList = [ level.strip() for level in path.split( "/" ) if level.strip() != "" ]
+      levelList = [ level.replace('\/','/').strip() for level in path_regex.split( path ) if level.strip('\ /') != "" ]
       for section in levelList:
         cfg = cfg[ section ]
       return self.dangerZoneEnd( cfg.listSections( ordered ) )
@@ -134,7 +136,7 @@ class ConfigurationData:
       cfg = self.mergedCFG
     self.dangerZoneStart()
     try:
-      levelList = [ level.strip() for level in path.split( "/" ) if level.strip() != "" ]
+      levelList = [ level.replace('\/','/').strip() for level in path_regex.split( path ) if level.strip('\ /') != "" ]
       for section in levelList:
         cfg = cfg[ section ]
       return self.dangerZoneEnd( cfg.listOptions( ordered ) )
@@ -148,7 +150,7 @@ class ConfigurationData:
     if not disableDangerZones:
       self.dangerZoneStart()
     try:
-      levelList = [ level.strip() for level in path.split( "/" ) if level.strip() != "" ]
+      levelList = [ level.replace('\/','/').strip() for level in path_regex.split( path ) if level.strip('\ /') != "" ]
       for section in levelList[:-1]:
         cfg = cfg[ section ]
       if levelList[-1] in cfg.listOptions():
@@ -164,7 +166,7 @@ class ConfigurationData:
     if not disableDangerZones:
       self.dangerZoneStart()
     try:
-      levelList = [ level.strip() for level in path.split( "/" ) if level.strip() != "" ]
+      levelList = [ level.replace('\/','/').strip() for level in path_regex.split( path ) if level.strip('\ /') != "" ]
       for section in levelList[:-1]:
         if section not in cfg.listSections():
           cfg.createNewSection( section )
@@ -180,7 +182,7 @@ class ConfigurationData:
       cfg = self.localCFG
     self.dangerZoneStart()
     try:
-      levelList = [ level.strip() for level in path.split( "/" ) if level.strip() != "" ]
+      levelList = [ level.replace('\/','/').strip() for level in path_regex.split( path ) if level.strip('\ /') != "" ]
       for section in levelList[:-1]:
         if section not in cfg.listSections():
           return
