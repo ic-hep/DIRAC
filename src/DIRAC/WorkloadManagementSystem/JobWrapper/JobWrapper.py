@@ -371,6 +371,17 @@ class JobWrapper(object):
                 valEnv = urlunquote(var.split("=")[1])
                 exeEnv[nameEnv] = valEnv
                 self.log.verbose("%s = %s" % (nameEnv, valEnv))
+        # Re-write path so that diracos dirs are last
+        # This is so that user payload preferentially gets system versions of things
+        if "PATH" in exeEnv:
+            path = []
+            path_suffix = []
+            for elem in exeEnv['PATH'].split(os.pathsep):
+                if os.sep + 'diracos' + os.sep in elem:
+                    path_suffix.append(elem)
+                else:
+                    path.append(elem)
+            exeEnv['PATH'] = os.pathsep.join(path + path_suffix)
 
         if os.path.exists(executable):
             # the actual executable is not yet running: it will be in few lines
