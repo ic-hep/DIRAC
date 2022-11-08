@@ -221,7 +221,7 @@ class JobWrapper(object):
         self.jobClass = self.jobArgs.get("JobSplitType", self.jobClass)
 
         if not self.cpuNormalizationFactor:
-            self.cpuNormalizationFactor = self.ceArgs.get("CPUNormalizationFactor", self.cpuNormalizationFactor)
+            self.cpuNormalizationFactor = float(self.ceArgs.get("CPUNormalizationFactor", self.cpuNormalizationFactor))
         self.siteName = self.ceArgs.get("Site", self.siteName)
 
         # Prepare the working directory, cd to there, and copying eventual extra arguments in it
@@ -544,6 +544,8 @@ class JobWrapper(object):
         cpuConsumed = self.__getCPU()["Value"]
         self.log.info("Total CPU Consumed is: %s" % cpuConsumed[1])
         self.__setJobParam("TotalCPUTime(s)", cpuConsumed[0])
+        print("HELLO WORLD!!!!")
+        print("Norm: ", type(self.cpuNormalizationFactor), str(self.cpuNormalizationFactor))
         normCPU = cpuConsumed[0] * self.cpuNormalizationFactor
         self.__setJobParam("NormCPUTime(s)", normCPU)
         if self.cpuNormalizationFactor:
