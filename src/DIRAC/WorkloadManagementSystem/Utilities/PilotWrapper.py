@@ -333,8 +333,10 @@ if os.path.exists('checksums.sha512'):
 # now finally launching the pilot script (which should be called dirac-pilot.py)
 # get the setup name an -z, if present to get remote logging in place
 opt = "%s"
-# generate pilot UUID
-UUID = str(uuid1())
+# try to get a pilot stamp from the environment:
+UUID =  os.environ.get('DIRAC_PILOT_STAMP')
+if UUID is None:
+    UUID = str(uuid1())
 opt = opt + " --pilotUUID " + UUID
 
 args = opt.split()

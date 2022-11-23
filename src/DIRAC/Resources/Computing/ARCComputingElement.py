@@ -259,26 +259,27 @@ class ARCComputingElement(ComputingElement):
                 xrslOutputs += '(%s "")' % (outputFile)
 
         xrsl = """
-&(executable="%(executable)s")
-(inputFiles=(%(executable)s "%(executableFile)s") %(xrslInputAdditions)s)
-(stdout="%(diracStamp)s.out")
-(stderr="%(diracStamp)s.err")
-(outputFiles=%(xrslOutputFiles)s)
-(queue=%(queue)s)
-%(xrslMPAdditions)s
-%(xrslExecutables)s
-%(xrslExtraString)s
-    """ % {
-            "executableFile": executableFile,
-            "executable": os.path.basename(executableFile),
-            "xrslInputAdditions": xrslInputs,
-            "diracStamp": diracStamp,
-            "queue": self.arcQueue,
-            "xrslOutputFiles": xrslOutputs,
-            "xrslMPAdditions": xrslMPAdditions,
-            "xrslExecutables": xrslExecutables,
-            "xrslExtraString": self.xrslExtraString,
-        }
+&(executable="{executable}")
+(inputFiles=({executable} "{executableFile}") {xrslInputAdditions})
+(stdout="{diracStamp}.out")
+(stderr="{diracStamp}.err")
+(environment=("DIRAC_PILOT_STAMP" "{diracStamp}"))
+(outputFiles={xrslOutputFiles})
+(queue={queue})
+{xrslMPAdditions}
+{xrslExecutables}
+{xrslExtraString}
+    """.format(
+            executableFile=executableFile,
+            executable=os.path.basename(executableFile),
+            xrslInputAdditions=xrslInputs,
+            diracStamp=diracStamp,
+            queue=self.arcQueue,
+            xrslOutputFiles=xrslOutputs,
+            xrslMPAdditions=xrslMPAdditions,
+            xrslExecutables=xrslExecutables,
+            xrslExtraString=self.xrslExtraString,
+        )
 
         return xrsl, diracStamp
 
